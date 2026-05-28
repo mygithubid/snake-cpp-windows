@@ -66,12 +66,14 @@ Use `sf::CircleShape` so it looks visually distinct from the square snake segmen
 
 Set a bright colour: red (`sf::Color::Red`) or yellow (`sf::Color(255, 220, 0)`) works well.
 
-To **centre** the circle inside the cell, offset its position by the radius:
+To position the circle inside its grid cell, set its position using a `sf::Vector2f`:
 ```cpp
-circle.setPosition(m_position.x * 32.f + 1.f, m_position.y * 32.f + 1.f);
+circle.setPosition({m_position.x * 32.f + 1.f, m_position.y * 32.f + 1.f});
 ```
 
 (Adjust the offset to taste.)
+
+> **SFML 3 note:** Like `sf::RectangleShape`, all SFML 3 `setPosition` calls take a `sf::Vector2f` using the `{x, y}` brace syntax. The two-argument form `setPosition(x, y)` was removed in SFML 3.
 
 ---
 
@@ -109,7 +111,7 @@ What should happen if `m_segments` is empty? Add a comment about this edge case 
 
 ---
 
-## ✅ Checkpoint
+## Checkpoint
 
 - [ ] A food circle appears on screen
 - [ ] When the snake reaches it, the snake grows by one segment
@@ -118,7 +120,7 @@ What should happen if `m_segments` is empty? Add a comment about this edge case 
 
 ---
 
-## 🧠 Concepts Introduced
+## Concepts Introduced
 
 - **`std::mt19937`** — a high-quality pseudo-random number generator
 - **`std::random_device`** — generates an unpredictable seed (uses hardware entropy on Windows)
@@ -128,14 +130,14 @@ What should happen if `m_segments` is empty? Add a comment about this edge case 
 
 ---
 
-## 💡 Experiment
+## Experiment
 
 - **Food in the snake's body** — what happens if food spawns inside the snake? This is a real bug. How would you fix it? (Hint: loop and regenerate the position until it doesn't overlap any segment.)
 - **Pulsing food** — can you make it grow and shrink slightly over time using `sf::Clock`?
 
 ---
 
-## 📝 Commit Your Work
+## Commit Your Work
 
 ```bash
 git add .

@@ -38,6 +38,8 @@ Before your game loop, create an `sf::Clock` object:
 sf::Clock clock;
 ```
 
+The clock starts ticking the moment you create it.
+
 Also create a variable to track accumulated time. SFML uses `sf::Time` for this. A good name is `timeSinceLastMove`, initialised to zero:
 ```cpp
 sf::Time timeSinceLastMove = sf::Time::Zero;
@@ -47,11 +49,13 @@ sf::Time timeSinceLastMove = sf::Time::Zero;
 
 ## 3.3 — Accumulate Time Inside the Loop
 
-At the start of each loop iteration, get the time since you last called `clock.restart()`. This method returns the elapsed time *and* resets the clock. Add the result to your accumulator:
+At the start of each loop iteration, get the time since you last called `clock.restart()`. This method returns the elapsed time *and* resets the clock back to zero. Add the result to your accumulator:
 
 ```cpp
 timeSinceLastMove += clock.restart();
 ```
+
+**Why the accumulator pattern?** You can't just check "has 150ms passed?" and reset — because if your frame takes 160ms, you'd lose that extra 10ms and the timing would drift. The accumulator carries forward any leftover time, so the snake always moves at a consistent rate.
 
 ---
 
@@ -74,11 +78,13 @@ Inside the loop, use an `if` statement to check whether enough time has accumula
 ```cpp
 if (timeSinceLastMove >= MOVE_INTERVAL) {
     // TODO: update the snake's position
-    timeSinceLastMove = sf::Time::Zero;   // reset accumulator
+    timeSinceLastMove -= MOVE_INTERVAL;   // subtract instead of zeroing, to preserve any overshoot
 }
 ```
 
 Right now the update block is empty — you'll fill it in Step 5.
+
+> **Why subtract instead of reset to zero?** If a frame takes 200ms and the interval is 150ms, you'd have 50ms of "extra" time. Subtracting keeps that 50ms in the accumulator, so the next move triggers sooner and the overall pace stays accurate.
 
 ---
 
@@ -96,7 +102,7 @@ while window is open:
 
     if timeSinceLastMove >= MOVE_INTERVAL:
         update snake   ← empty for now
-        reset accumulator
+        timeSinceLastMove -= MOVE_INTERVAL
 
     window.clear()
     // draw things here  ← empty for now
@@ -119,7 +125,7 @@ from inside the `build\` folder. CMake only needs to be re-run if you add *new f
 
 ---
 
-## ✅ Checkpoint
+## Checkpoint
 
 - [ ] My game loop has a clock and an accumulator
 - [ ] There's a `MOVE_INTERVAL` constant
@@ -128,23 +134,23 @@ from inside the `build\` folder. CMake only needs to be re-run if you add *new f
 
 ---
 
-## 🧠 Concepts Introduced
+## Concepts Introduced
 
 - **Game loop** — the core pattern of every game: input → update → draw
 - **Delta time / accumulator** — measuring elapsed time to decouple game speed from hardware speed
 - **`const`** — declares a value that should never change
-- **`sf::Clock`** — SFML's timer class
-- **`sf::Time`** — SFML's time value type
+- **`sf::Clock`** — SFML's timer class; `restart()` returns elapsed time and resets the clock
+- **`sf::Time`** — SFML's time value type; use `sf::milliseconds()` to create one
 
 ---
 
-## 💡 Experiment
+## Experiment
 
 - Try changing `MOVE_INTERVAL` to `sf::milliseconds(50)` and `sf::milliseconds(500)`. Come back and notice the difference after Step 5 when the snake is visible.
 
 ---
 
-## 📝 Commit Your Work
+## Commit Your Work
 
 ```bash
 git add .

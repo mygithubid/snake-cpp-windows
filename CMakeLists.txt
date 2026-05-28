@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # If you installed SFML somewhere else, set SFML_DIR to the folder containing
 # SFMLConfig.cmake, e.g.:
 #   cmake .. -DSFML_DIR="C:/SFML/lib/cmake/SFML"
-find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
+find_package(SFML 3 REQUIRED COMPONENTS Graphics Window System)
 
 # Collect all .cpp files in src/
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -23,8 +23,8 @@ add_executable(snake ${SOURCES})
 # Later you can change add_executable above to:
 #   add_executable(snake WIN32 ${SOURCES})
 
-# Link SFML
-target_link_libraries(snake sfml-graphics sfml-window sfml-system)
+# Link SFML (SFML 3 uses namespaced CMake targets)
+target_link_libraries(snake PRIVATE SFML::Graphics SFML::Window SFML::System)
 
 # Include our own headers
 target_include_directories(snake PRIVATE include)

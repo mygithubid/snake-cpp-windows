@@ -21,18 +21,20 @@ The CMakeLists.txt already copies the `assets\` folder into `build\` automatical
 
 ## 8.2 — Load the Font in main.cpp
 
-Declare an `sf::Font` object and load the file **before** the game loop:
+In SFML 3, fonts are loaded with `sf::Font::openFromFile`, which returns a `std::optional<sf::Font>`. Declare the font and load it **before** the game loop:
 
 ```cpp
-sf::Font font;
-if (!font.loadFromFile("assets/font.ttf")) {
+auto fontResult = sf::Font::openFromFile("assets/font.ttf");
+if (!fontResult) {
     // If this fails, the game can't show any text.
-    // Return an error code so you know something went wrong.
     return -1;
 }
+sf::Font& font = *fontResult;
 ```
 
-> **Always check whether file loading succeeds.** Forgetting this is one of the most common beginner mistakes — it causes mysterious crashes that are hard to debug.
+> **Always check whether file loading succeeds.** Forgetting this is one of the most common beginner mistakes — it causes mysterious crashes that are hard to debug. If `fontResult` is empty (the optional has no value), the font file wasn't found.
+
+> **SFML 3 note:** In SFML 3, the old `font.loadFromFile(...)` member function was replaced by `sf::Font::openFromFile(...)`, a static factory function that returns a `std::optional<sf::Font>`. Check the optional before using the font.
 
 Note: Even on Windows, use forward slashes (`/`) in SFML file paths. SFML handles this correctly.
 
@@ -56,14 +58,12 @@ score = 0;
 
 ## 8.4 — Display the Live Score
 
-Create an `sf::Text` object for the score. Set it up once before the game loop, and update its string every frame:
+In SFML 3, `sf::Text` requires you to pass the font at construction time — there is no default constructor. Create the text object once before the game loop:
 
 ```cpp
-sf::Text scoreText;
-scoreText.setFont(font);
-scoreText.setCharacterSize(20);
+sf::Text scoreText(font, "", 20);
 scoreText.setFillColor(sf::Color::White);
-scoreText.setPosition(10.f, 10.f);
+scoreText.setPosition({10.f, 10.f});
 ```
 
 Inside the draw section, update the displayed string and draw it:
@@ -74,6 +74,8 @@ window.draw(scoreText);
 ```
 
 `std::to_string()` converts an integer into a `std::string`. Include `<string>` at the top of `main.cpp` if you get a compile error about it.
+
+> **SFML 3 note:** In SFML 3, `sf::Text(font, string, characterSize)` replaces the old pattern of creating a default `sf::Text` and calling `setFont`. The font must be passed in the constructor.
 
 ---
 
@@ -86,13 +88,15 @@ When `gameOver` is true, show two pieces of text:
 
 **Centring text on screen:**
 
-SFML text is positioned by its top-left corner by default. To centre it, use `getLocalBounds()` to find its size and then set the origin to its centre:
+SFML text is positioned by its top-left corner by default. To centre it, use `getLocalBounds()` to find its size and then set the origin to its centre.
+
+In SFML 3, `sf::FloatRect` uses `.position` and `.size` fields instead of the SFML 2 `.left`/`.top`/`.width`/`.height` fields:
 
 ```cpp
 sf::FloatRect bounds = myText.getLocalBounds();
-myText.setOrigin(bounds.left + bounds.width / 2.f,
-                 bounds.top  + bounds.height / 2.f);
-myText.setPosition(320.f, 280.f);   // centre of 640×640 window
+myText.setOrigin({bounds.position.x + bounds.size.x / 2.f,
+                  bounds.position.y + bounds.size.y / 2.f});
+myText.setPosition({320.f, 280.f});   // centre of 640×640 window
 ```
 
 Do this every time you update the string, because the text dimensions change when the content changes.
@@ -127,7 +131,7 @@ Confirm the score goes up as food is eaten, and the game over screen shows the f
 
 ---
 
-## ✅ Checkpoint
+## Checkpoint
 
 - [ ] The score appears top-left during gameplay and increases when food is eaten
 - [ ] "GAME OVER" text appears when the game ends
@@ -136,18 +140,19 @@ Confirm the score goes up as food is eaten, and the game over screen shows the f
 
 ---
 
-## 🧠 Concepts Introduced
+## Concepts Introduced
 
-- **`sf::Font`** — loads a font file from disk
-- **`sf::Text`** — renders text to the screen
+- **`sf::Font`** — loads a font file from disk; in SFML 3, use `sf::Font::openFromFile`
+- **`std::optional<T>`** — a type that either holds a value or is empty; used for fallible operations
+- **`sf::Text`** — renders text to the screen; in SFML 3, requires a font in the constructor
 - **`std::to_string()`** — converts numbers to strings
 - **String concatenation** — joining strings with `+`
 - **`getLocalBounds()` / `setOrigin()`** — centring text
-- **Error handling** — always check if file loading succeeds
+- **`sf::FloatRect`** — a rectangle described by `.position` (top-left) and `.size`
 
 ---
 
-## 💡 Experiment
+## Experiment
 
 - Can you make the score text briefly flash green when it increases?
 - What if the game sped up every 5 points? (Decrease `MOVE_INTERVAL` at score milestones)
@@ -155,7 +160,7 @@ Confirm the score goes up as food is eaten, and the game over screen shows the f
 
 ---
 
-## 📝 Commit Your Work
+## Commit Your Work
 
 ```bash
 git add .

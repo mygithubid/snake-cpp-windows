@@ -12,7 +12,7 @@ SFML (Simple and Fast Multimedia Library) is a C++ library that handles:
 - Detecting keyboard/mouse input
 - Playing sounds
 
-You'll use it throughout this project. The [SFML documentation](https://www.sfml-dev.org/documentation/2.6.0/) is excellent — bookmark it.
+You'll use it throughout this project. The [SFML 3 documentation](https://www.sfml-dev.org/documentation/3.0/) is excellent — bookmark it. When searching for help online, make sure results mention SFML 3 (not SFML 2), as the API changed significantly between versions.
 
 ---
 
@@ -26,7 +26,7 @@ At the very top, you need to tell the compiler to use SFML's graphics module. In
 #include <SFML/Graphics.hpp>
 ```
 
-**Why?** Headers are like instruction manuals — they tell the compiler what functions and types a library provides, so you can use them in your own code.
+**Why?** Headers are like instruction manuals — they tell the compiler what functions and types a library provides, so you can use them in your own code. `Graphics.hpp` is a convenience header that pulls in everything from the graphics, window, and system modules at once.
 
 ---
 
@@ -35,17 +35,19 @@ At the very top, you need to tell the compiler to use SFML's graphics module. In
 Inside your `main()` function, create a window object. In SFML, a window is represented by `sf::RenderWindow`.
 
 The constructor takes two arguments:
-1. `sf::VideoMode(width, height)` — the size of the window in pixels
+1. `sf::VideoMode({width, height})` — the size of the window in pixels (note the curly braces)
 2. A string — the title shown in the title bar
 
 Use a width of **640** and a height of **640**. Give it any title you like.
 
 **Hint:** It looks like this pattern:
 ```cpp
-sf::RenderWindow window(sf::VideoMode(/* width */, /* height */), "/* title */");
+sf::RenderWindow window(sf::VideoMode({/* width */, /* height */}), "/* title */");
 ```
 
 Replace the comments with real values.
+
+> **SFML 3 note:** In SFML 3, `sf::VideoMode` takes its size as a `sf::Vector2u` (a pair of unsigned integers), which is why you pass both numbers inside `{}`. This is different from SFML 2, where you wrote `sf::VideoMode(640, 640)`.
 
 ---
 
@@ -63,7 +65,21 @@ Write a `while` loop that continues as long as `window.isOpen()` is true.
 Inside the loop:
 
 **Step A — Handle events:**
-Create an `sf::Event` variable. Use `window.pollEvent(event)` in another loop to check for events. If `event.type == sf::Event::Closed`, call `window.close()`.
+
+In SFML 3, `window.pollEvent()` returns a `std::optional<sf::Event>` — an object that either contains an event or is empty (meaning no event happened). Use it in a `while` loop like this:
+
+```cpp
+while (const auto event = window.pollEvent()) {
+    if (event->is<sf::Event::Closed>())
+        window.close();
+}
+```
+
+How to read this:
+- `window.pollEvent()` returns the next event in the queue, or nothing if the queue is empty
+- The `while` loop keeps running as long as there's an event to process
+- `event->is<sf::Event::Closed>()` checks whether that event is a "window closed" event
+- `window.close()` marks the window as closed (the outer `while (window.isOpen())` loop will then exit)
 
 **Step B — Clear the window:**
 Call `window.clear()`. You can optionally pass an `sf::Color` to set the background colour. Try `sf::Color::Black`.
@@ -82,7 +98,7 @@ cd build
 mingw32-make
 ```
 
-You only need to re-run `cmake .. -G "MinGW Makefiles"` once. After that, just `mingw32-make` picks up any changes.
+You only need to re-run `cmake .. -G "MinGW Makefiles"` once (when you first set up, or when you add new files). After that, just `mingw32-make` picks up changes to existing files.
 
 Run the game:
 ```bash
@@ -91,7 +107,7 @@ Run the game:
 
 Or double-click `snake.exe` inside the `build\` folder in File Explorer.
 
-You should see a black window appear. Close it by clicking the ✕ button — if it closes cleanly (no crash, no error), you've done it correctly!
+You should see a black window appear. Close it by clicking the X button — if it closes cleanly (no crash, no error), you've done it correctly!
 
 > **Note:** The first time you run `snake.exe`, Windows Defender or SmartScreen may show a warning because it's an unknown program. Click **"More info" → "Run anyway"**. This only happens once.
 
@@ -103,33 +119,34 @@ You may notice a black console window appears behind the game window. This is no
 
 ---
 
-## ✅ Checkpoint
+## Checkpoint
 
 - [ ] A window appears when I double-click `snake.exe`
-- [ ] Clicking ✕ closes the window cleanly (no crash)
+- [ ] Clicking X closes the window cleanly (no crash)
 - [ ] The code compiles with no errors or warnings
 
 ---
 
-## 🧠 Concepts Introduced
+## Concepts Introduced
 
 - **`#include`** — imports declarations from a header file
 - **Objects** — `sf::RenderWindow` is an *object* (an instance of a *class*)
 - **`while` loop** — keeps running as long as a condition is true
+- **`std::optional`** — a type that either contains a value or is empty; used by SFML's event system
 - **Event-driven programming** — the program responds to things that happen (like the user closing the window)
 - **Frame** — one "picture" in the game. Clear → draw → display = one frame
 
 ---
 
-## 💡 Experiment
+## Experiment
 
-- Change the window size. What happens if width ≠ height?
+- Change the window size. What happens if width != height?
 - Try different background colours: `sf::Color::Blue`, `sf::Color(255, 128, 0)`
 - What happens if you remove the event polling but keep the while loop? (The window won't respond to being closed — you'll need to kill it from Task Manager!)
 
 ---
 
-## 📝 Commit Your Work
+## Commit Your Work
 
 ```bash
 git add .

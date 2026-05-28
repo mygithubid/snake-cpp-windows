@@ -74,12 +74,17 @@ Use an `if` statement with the `&&` (AND) or `||` (OR) operator.
 The game board is a grid of cells, each **32×32 pixels**. A segment at grid position `(gx, gy)` sits at pixel position `(gx * 32, gy * 32)`.
 
 For each segment:
-1. Create an `sf::RectangleShape` of size `(30.f, 30.f)` — slightly smaller than 32 to leave a 1-pixel gap
-2. Set its position with `shape.setPosition(segment.x * 32.f, segment.y * 32.f)`
+1. Create an `sf::RectangleShape` of size `{30.f, 30.f}` — slightly smaller than 32 to leave a 1-pixel gap
+2. Set its position using a `sf::Vector2f`:
+   ```cpp
+   shape.setPosition({segment.x * 32.f, segment.y * 32.f});
+   ```
 3. Set its colour — **make the head a different colour** from the body
 4. Call `window.draw(shape)`
 
 To know which is the head, you can either use an index-based loop and check `i == 0`, or handle the head separately.
+
+> **SFML 3 note:** In SFML 3, all `setPosition` and `setOrigin` calls take a `sf::Vector2f` instead of two separate `float` arguments. Always use the `{x, y}` brace syntax or `sf::Vector2f(x, y)`.
 
 **Range-based for loop syntax:**
 ```cpp
@@ -98,16 +103,32 @@ Return `m_segments[0]`. You'll use this in Steps 6 and 7 to check for eating foo
 
 ## 5.8 — Handle Keyboard Input in main.cpp
 
-In your event polling loop, add a case for `sf::Event::KeyPressed`.
+In your event polling loop, add handling for key-press events.
 
-Check `event.key.code` against SFML key constants and call `snake.setDirection(...)`:
+In SFML 3, you use `event->getIf<sf::Event::KeyPressed>()` to check for a key press. It returns a pointer to the key event data if the event is a key press, or `nullptr` if it isn't:
+
+```cpp
+while (const auto event = window.pollEvent()) {
+    if (event->is<sf::Event::Closed>())
+        window.close();
+
+    if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
+        // keyEvent->code contains which key was pressed
+        // use it here to call snake.setDirection(...)
+    }
+}
+```
+
+Check `keyEvent->code` against SFML key constants and call `snake.setDirection(...)`:
 
 | Key pressed | Direction to set |
 |-------------|-----------------|
-| `sf::Keyboard::Up` or `sf::Keyboard::W` | `Direction::Up` |
-| `sf::Keyboard::Down` or `sf::Keyboard::S` | `Direction::Down` |
-| `sf::Keyboard::Left` or `sf::Keyboard::A` | `Direction::Left` |
-| `sf::Keyboard::Right` or `sf::Keyboard::D` | `Direction::Right` |
+| `sf::Keyboard::Key::Up` or `sf::Keyboard::Key::W` | `Direction::Up` |
+| `sf::Keyboard::Key::Down` or `sf::Keyboard::Key::S` | `Direction::Down` |
+| `sf::Keyboard::Key::Left` or `sf::Keyboard::Key::A` | `Direction::Left` |
+| `sf::Keyboard::Key::Right` or `sf::Keyboard::Key::D` | `Direction::Right` |
+
+> **SFML 3 note:** Key constants moved into the `sf::Keyboard::Key` enum class. Where SFML 2 used `sf::Keyboard::Up`, SFML 3 uses `sf::Keyboard::Key::Up`.
 
 ---
 
@@ -130,7 +151,7 @@ Or double-click `snake.exe` in File Explorer.
 
 ---
 
-## ✅ Checkpoint
+## Checkpoint
 
 - [ ] The snake appears on screen as coloured squares
 - [ ] The head is a different colour from the body
@@ -140,18 +161,19 @@ Or double-click `snake.exe` in File Explorer.
 
 ---
 
-## 🧠 Concepts Introduced
+## Concepts Introduced
 
 - **`std::vector` operations** — `push_back`, `pop_back`, `insert`, `begin`
 - **Range-based for loop** — `for (const auto& item : collection)`
 - **`auto`** — the compiler deduces the type for you
 - **`const` reference** — `const auto&` avoids copying each element
 - **`sf::RectangleShape`** — an SFML drawable rectangle
-- **Keyboard events** — `sf::Event::KeyPressed` and `sf::Keyboard` key codes
+- **`sf::Vector2f`** — SFML's two-float vector, used for positions and sizes
+- **`getIf<T>()`** — SFML 3's way to check if an event is of a specific type and get its data
 
 ---
 
-## 💡 Experiment
+## Experiment
 
 - Make the cell size smaller (32 → 16). What else do you need to change?
 - Can you make the snake's colour gradually shift from head to tail?
@@ -159,7 +181,7 @@ Or double-click `snake.exe` in File Explorer.
 
 ---
 
-## 📝 Commit Your Work
+## Commit Your Work
 
 ```bash
 git add .

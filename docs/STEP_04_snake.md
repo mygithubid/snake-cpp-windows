@@ -35,7 +35,7 @@ In VS Code, create a new file: `include\Snake.h`
 
 A header file *declares* what a class looks like — its variables and function signatures — without defining how the functions work. The actual code goes in a `.cpp` file.
 
-Start with **include guards** — these prevent the header from being included twice (a common source of confusing errors on Windows):
+Start with **include guards** — these prevent the header from being included twice (a common source of confusing errors):
 
 ```cpp
 #ifndef SNAKE_H
@@ -46,13 +46,15 @@ Start with **include guards** — these prevent the header from being included t
 #endif // SNAKE_H
 ```
 
+**Why include guards?** Suppose both `main.cpp` and `Food.h` include `Snake.h`. Without guards, the compiler would see the `Snake` class declaration twice and report an error. The guards make the compiler skip the file if it's already been processed.
+
 ---
 
 ## 4.3 — Include What You Need
 
 Inside the guards, add:
 - `#include <vector>` — you'll use `std::vector` to store the snake's segments
-- `#include <SFML/Graphics.hpp>` — for drawing
+- `#include <SFML/Graphics.hpp>` — for drawing types like `sf::RenderWindow` and `sf::Vector2i`
 
 ---
 
@@ -64,7 +66,7 @@ Before the class declaration, define an `enum class` for the four directions:
 enum class Direction { Up, Down, Left, Right };
 ```
 
-An `enum class` is a type that can only hold one of those four named values. It's much safer than using raw integers (0, 1, 2, 3) — the compiler will catch mistakes.
+An `enum class` is a type that can only hold one of those four named values. It's much safer than using raw integers (0, 1, 2, 3) — the compiler will catch mistakes like passing the wrong number.
 
 ---
 
@@ -87,7 +89,7 @@ Write a `class Snake` with:
 - `Direction m_direction` — current direction
 - `bool m_shouldGrow` — flag: grow on the next move?
 
-> **Naming convention:** Many C++ programmers prefix private member variables with `m_`. This makes it easy to tell apart local variables from class members. It's optional but a good habit.
+> **Naming convention:** Many C++ programmers prefix private member variables with `m_`. This makes it easy to tell apart local variables (inside a function) from class members. It's optional but a good habit.
 
 ---
 
@@ -114,7 +116,7 @@ void Snake::move()
 }
 ```
 
-The `::` is the **scope resolution operator** — it says "this `move` belongs to the `Snake` class."
+The `::` is the **scope resolution operator** — it says "this `move` belongs to the `Snake` class, not some other class."
 
 Don't implement anything yet — just get it to compile.
 
@@ -139,11 +141,11 @@ In your **MSYS2 MinGW 64-bit** terminal (inside `build\`):
 mingw32-make
 ```
 
-CMake will automatically detect the new `Snake.cpp` file because `CMakeLists.txt` uses `file(GLOB_RECURSE SOURCES "src/*.cpp")` — it picks up all `.cpp` files in `src\` automatically.
+CMake will automatically detect the new `Snake.cpp` file because `CMakeLists.txt` uses `file(GLOB_RECURSE SOURCES "src/*.cpp")` — it picks up all `.cpp` files in `src\` automatically. You don't need to run `cmake` again.
 
 ---
 
-## ✅ Checkpoint
+## Checkpoint
 
 - [ ] `include\Snake.h` exists with a complete class declaration
 - [ ] `src\Snake.cpp` exists with empty function stubs
@@ -152,11 +154,11 @@ CMake will automatically detect the new `Snake.cpp` file because `CMakeLists.txt
 
 ---
 
-## 🧠 Concepts Introduced
+## Concepts Introduced
 
 - **Class** — a user-defined type that bundles data and behaviour
-- **Object / instance** — a concrete example of a class
-- **Public / private** — access control; private members can only be touched inside the class
+- **Object / instance** — a concrete example of a class (like how `window` is an instance of `sf::RenderWindow`)
+- **Public / private** — access control; private members can only be touched inside the class itself
 - **Header file (.h)** — declares what a class looks like
 - **Source file (.cpp)** — defines how the class actually works
 - **`std::vector`** — a resizable list from the standard library
@@ -166,7 +168,7 @@ CMake will automatically detect the new `Snake.cpp` file because `CMakeLists.txt
 
 ---
 
-## 📝 Commit Your Work
+## Commit Your Work
 
 ```bash
 git add .

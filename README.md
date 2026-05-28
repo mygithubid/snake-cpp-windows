@@ -1,6 +1,6 @@
-# 🐍 Snake Game in C++ — Windows Learning Project
+# Snake Game in C++ — Windows Learning Project
 
-Welcome! This project will guide you through building a **Snake game** from scratch using **C++** and **SFML** on **Windows**.
+Welcome! This project will guide you through building a **Snake game** from scratch using **C++** and **SFML 3** on **Windows**.
 
 By the end, you'll have a fully playable game — and along the way you'll learn:
 
@@ -11,7 +11,7 @@ By the end, you'll have a fully playable game — and along the way you'll learn
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 snake-cpp-windows/
@@ -37,7 +37,7 @@ snake-cpp-windows/
 
 ---
 
-## 🚀 Where to Start
+## Where to Start
 
 **Read the docs folder in order**, starting with `STEP_01_setup.md`.
 
@@ -45,7 +45,7 @@ Each file tells you exactly what to do next, explains *why* you're doing it, and
 
 ---
 
-## 🛠 Requirements (Windows only)
+## Requirements (Windows only)
 
 - Windows 10 or 11 (64-bit)
 - [MSYS2](https://www.msys2.org/) — provides the compiler, CMake, and SFML all in one place
@@ -56,7 +56,7 @@ Full installation instructions are in **STEP_01_setup.md**.
 
 ---
 
-## ⚡ Quick Build (after setup is complete)
+## Quick Build (after setup is complete)
 
 Open the **MSYS2 MinGW 64-bit** terminal, navigate to this folder, then run:
 
@@ -73,7 +73,13 @@ The game executable will appear at `build\snake.exe`.
 
 ---
 
-## 💡 Tips
+## SFML Version
+
+This project uses **SFML 3**. If you have SFML 2 installed, the build will fail with a version mismatch error. Re-run the `pacman` install command in STEP_01 to get SFML 3.
+
+---
+
+## Tips
 
 - **Don't rush.** Read each step fully before writing any code.
 - **Type the code yourself** — don't copy/paste. Muscle memory matters.
@@ -81,4 +87,4 @@ The game executable will appear at `build\snake.exe`.
 - Use `git commit` after each step so you can go back if something breaks.
 - Always use the **MSYS2 MinGW 64-bit** terminal, not PowerShell or Command Prompt, for building.
 
-Good luck, and have fun! 🎮
+Good luck, and have fun!

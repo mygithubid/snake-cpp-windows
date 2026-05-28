@@ -18,7 +18,7 @@ Return `true` if **any** of these are true:
 - `head.y < 0`
 - `head.y >= gridHeight`
 
-Use the **logical OR** operator `||` to combine them. Use `&&` to make sure all conditions are checked in one `return` statement.
+Use the **logical OR** operator `||` to combine them in a single `return` statement.
 
 ---
 
@@ -26,7 +26,7 @@ Use the **logical OR** operator `||` to combine them. Use `&&` to make sure all 
 
 Check if the head overlaps any *other* segment.
 
-Get the head (`m_segments[0]`). Loop through segments starting at index **1**. If any matches the head, return `true`. If the loop finishes, return `false`.
+Get the head (`m_segments[0]`). Loop through segments starting at index **1**. If any matches the head, return `true`. If the loop finishes without finding a match, return `false`.
 
 Use `size_t` as your index type:
 ```cpp
@@ -35,7 +35,7 @@ for (size_t i = 1; i < m_segments.size(); ++i) {
 }
 ```
 
-(`size_t` is the correct type for container indices — it's an unsigned integer.)
+(`size_t` is the correct type for container indices — it's an unsigned integer that's guaranteed to be large enough to hold any vector size.)
 
 ---
 
@@ -66,25 +66,30 @@ When `gameOver` is true, draw a semi-transparent dark rectangle over the whole w
 After drawing the snake:
 ```cpp
 if (gameOver) {
-    sf::RectangleShape overlay(sf::Vector2f(640.f, 640.f));
+    sf::RectangleShape overlay({640.f, 640.f});
     overlay.setFillColor(sf::Color(0, 0, 0, 150));  // black, 150/255 opacity
     window.draw(overlay);
 }
 ```
 
-The fourth value in `sf::Color(r, g, b, a)` is **alpha**: 0 = fully transparent, 255 = fully opaque.
+The fourth value in `sf::Color(r, g, b, a)` is **alpha**: 0 = fully transparent, 255 = fully opaque. A value of 150 lets you see the frozen snake underneath.
 
 ---
 
 ## 7.5 — Restarting the Game
 
-Handle the **R** key in your event polling to restart:
+Handle the **R** key in your event polling to restart.
+
+In SFML 3, you check for keyboard events using `getIf`:
 
 ```cpp
-if (event.key.code == sf::Keyboard::R && gameOver) {
-    snake = Snake(GRID_WIDTH / 2, GRID_HEIGHT / 2);
-    food  = Food(GRID_WIDTH, GRID_HEIGHT);
-    gameOver = false;
+if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
+    if (keyEvent->code == sf::Keyboard::Key::R && gameOver) {
+        snake    = Snake(GRID_WIDTH / 2, GRID_HEIGHT / 2);
+        food     = Food(GRID_WIDTH, GRID_HEIGHT);
+        gameOver = false;
+    }
+    // ... direction handling from Step 5 ...
 }
 ```
 
@@ -103,7 +108,7 @@ Drive the snake into a wall or into itself and confirm the game freezes. Press R
 
 ---
 
-## ✅ Checkpoint
+## Checkpoint
 
 - [ ] The game stops when the snake hits a wall
 - [ ] The game stops when the snake hits its own body
@@ -112,7 +117,7 @@ Drive the snake into a wall or into itself and confirm the game freezes. Press R
 
 ---
 
-## 🧠 Concepts Introduced
+## Concepts Introduced
 
 - **Boolean logic** — `&&` (AND), `||` (OR), `!` (NOT)
 - **`size_t`** — the unsigned integer type for container sizes and indices
@@ -122,14 +127,14 @@ Drive the snake into a wall or into itself and confirm the game freezes. Press R
 
 ---
 
-## 💡 Experiment
+## Experiment
 
 - **Wall wrapping:** Instead of dying at the wall, could you make the snake reappear on the opposite side? (Hint: use the modulo `%` operator on the head position after moving.)
 - Can you display different messages depending on *how* the snake died — wall or self?
 
 ---
 
-## 📝 Commit Your Work
+## Commit Your Work
 
 ```bash
 git add .

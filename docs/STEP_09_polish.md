@@ -4,13 +4,13 @@
 
 ---
 
-## 🎉 What You've Built
+## What You've Built
 
 You've written a complete game from scratch on Windows. Along the way you learned:
 
 - **C++ syntax** — variables, loops, conditionals, functions
 - **Classes and OOP** — designing objects with data and behaviour
-- **SFML** — windows, drawing, events, text, timing
+- **SFML 3** — windows, drawing, events, text, timing
 - **Game programming patterns** — the game loop, fixed timestep, state machines
 - **Standard library** — vectors, random numbers, strings
 - **Windows toolchain** — MSYS2, MinGW, CMake, Git
@@ -48,23 +48,25 @@ Rebuild — the console window will be gone. Note: `std::cout` no longer works a
 
 ## 9.2 — Polish Ideas
 
-### 🎨 Visual
+### Visual
 - **Grid lines** — draw faint lines between cells to make the grid visible
 - **Rounded snake** — use `sf::CircleShape` for each segment instead of rectangles
 - **Colour gradient** — make each body segment slightly different, fading from head to tail
 - **Animated food** — use a `sf::Clock` to pulse the food's size or colour
 - **Start screen** — show a title before the game begins; wait for the player to press a key
 
-### 🔊 Sound
-- SFML includes `sf::Sound` and `sf::SoundBuffer` — try adding a sound when food is eaten
-- Free sound effects: [freesound.org](https://freesound.org)
+### Sound
+- SFML 3 includes `sf::Sound` and `sf::SoundBuffer` in the audio module — try adding a sound when food is eaten
+- To use audio, add `SFML::Audio` to the `target_link_libraries` line in CMakeLists.txt
+- Load a sound buffer with `auto buffer = sf::SoundBuffer::openFromFile("assets/eat.wav")`
+- Free sound effects: [freesound.org](https://freesound.org) (.wav or .ogg format work with SFML)
 
-### ⚙️ Gameplay
+### Gameplay
 - **Increasing speed** — reduce `MOVE_INTERVAL` every time the snake eats food
 - **Wall wrap mode** — toggle between instant death at walls vs. wrapping to the other side
 - **Multiple food items** — spawn 2–3 at once for more chaos
 
-### 💾 Persistent High Score
+### Persistent High Score
 Save the high score to a file so it survives between sessions:
 
 ```cpp
@@ -114,6 +116,7 @@ Try refactoring your code to achieve this.
 - **learncpp.com** — free, comprehensive, up-to-date, starts from zero
 - **"Programming: Principles and Practice Using C++"** by Bjarne Stroustrup — written by the inventor of C++
 - **cppreference.com** — the reference manual for the C++ standard library
+- **SFML 3 documentation** — https://www.sfml-dev.org/documentation/3.0/
 
 ### Next Projects
 - **Tetris** — similar structure to Snake but more complex rotation and line-clearing logic
@@ -149,7 +152,7 @@ Your `README.md` will display automatically on the repository page. Consider upd
 
 ---
 
-## 📝 Final Commit
+## Final Commit
 
 ```bash
 git add .
@@ -165,4 +168,4 @@ Building a game takes patience, problem-solving, and persistence. Every error me
 
 The best programmers aren't the ones who never get stuck — they're the ones who know how to get unstuck.
 
-Keep building things. 🚀
+Keep building things.
